@@ -1,9 +1,5 @@
-# 75.43 Introducción a Sistemas Distribuidos
-## Ejemplo API Rest
-
-Para el ejercicio de la semana 2 vamos a querer capturar el tráfico HTTP al interacturar con una API Rest.
-La cátedra provee una API simple para utilizar para este fin.
-Además, este mismo stack va a ser utilizado para el TP asi que sugerimos que investiguen el código de este ejemplo.
+# 75.43 Introducción a Sistemas Distribuidos - TP1 
+[![Build Status](https://travis-ci.com/MatiasReimondo/DistroTP1.svg?branch=master)](https://travis-ci.com/MatiasReimondo/DistroTP1)
 
 ## Inicialización
 
