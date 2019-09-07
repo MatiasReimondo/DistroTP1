@@ -27,3 +27,8 @@ Una vez iniciado el servidor, podemos navegar a la documentación de la API. Par
 Allí podremos encontrar todos los endpoints expuestos por la API.
 Para realizar el primer request, podemos navegar en el browser a http://localhost:8080/api/alumnos.
 
+## Tests
+
+Correr:
+
+`$ pytest`
