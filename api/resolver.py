@@ -6,6 +6,7 @@ class Resolver:
     def resolve(self, domain):
         results = []
         result = dns.resolver.query(domain)
+        print(result)
         for answer in result.response.answer:
             results.append(self.parse_domain(domain,str(answer)))
         return results
