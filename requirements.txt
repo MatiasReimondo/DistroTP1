@@ -17,5 +17,6 @@ six==1.12.0
 swagger-ui-bundle==0.0.5
 urllib3==1.25.3
 Werkzeug==0.15.5
+dnspython==1.16.0
 pytest
 pytest-flask

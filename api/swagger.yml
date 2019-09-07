@@ -10,6 +10,29 @@ servers:
 
 # Paths servidos por la aplicación
 paths:
+  /domains/{domain}:
+    get:
+      operationId: "api.domains.obtener_dominio"
+      tags:
+        - "Domains"
+      summary: "Obtiene la IP asociada a un dominio en particular"
+      description: "Obtiene la IP de un dominio ya sea custom o no"
+      parameters:
+        - in: path
+          name: domain
+          required: true
+          schema:
+            type: string
+          description: El nombre del dominio
+      responses:
+        200:
+          description: "Se obtuvo el dominio correctamente"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Domain'
+        404:
+          description: "Dominio no encontrado"
   /alumnos:
     get:
       operationId: "api.alumnos.obtener_todos"
@@ -92,6 +115,15 @@ paths:
 # Declaración de tipos de datos
 components:
   schemas:
+    Domain:
+      type: "object"
+      properties:
+        domain:
+          type: "string"
+        ip:
+          type: "string"
+        custom:
+          type: "boolean"
     Alumno:
       type: "object"
       properties:
