@@ -9,7 +9,7 @@ def app():
     return _app
 
 
-@pytest.fixture(scope='module')
+@pytest.fixture(scope="module")
 def client():
     with create_app().app.test_client() as c:
         yield c
