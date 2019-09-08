@@ -28,18 +28,15 @@ class Resolver:
         return self.dns_resolver.resolve(domain)
 
     def _search_custom_domain(self, domain):
-        found = False
-        for custom_domain in self.domains.values():
-            json_domain = json.loads(custom_domain)
-            found = domain == json_domain.get("domain")
-            if found:
-                return Domain(domain, json_domain.get("ip"), True)
-        raise DomainNotFoundError
+        if domain not in self.domains:
+            raise DomainNotFoundError
+
+        return Domain(domain, self.domains[domain].ip, True)
 
     def save_custom_domain(self, domain, ip):
         if domain in self.domains:
             raise DomainAlreadyExistsError
-        new_custom = json.dumps(Domain(domain, ip, True).__dict__)
+        new_custom = Domain(domain, ip, True)
         self.domains[domain] = new_custom
         return new_custom
 
@@ -49,14 +46,16 @@ class Resolver:
         custom = self.domains.pop(domain)
         return custom
 
-    def modify_custom_domain(self, domain_name, ip):
+    def modify_custom_domain(self, domain_name, new_domain, ip):
         if domain_name not in self.domains:
             raise DomainNotFoundError
 
         domain = self.domains[domain_name]
 
-        domain.domain = domain_name
+        domain.domain = new_domain
         domain.ip = ip
+        self.domains[new_domain] = domain
+        del self.domains[domain_name]
         return domain
 
     def get_all_customs(self):

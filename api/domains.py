@@ -47,7 +47,7 @@ def agregar_dominio(**kwargs):
     except DomainAlreadyExistsError:
         return make_response({}, 400)
 
-    response = make_response(new_custom, 201)
+    response = make_response(json.dumps(new_custom.__dict__), 201)
     response.mimetype = "application/json"
     return response
 
@@ -58,15 +58,15 @@ def modificar_dominio(domain, **kwargs):
     domain_body = custom.get("domain")
     ip = custom.get("ip")
 
-    if not domain_body or not ip or domain != domain_body:
+    if not domain_body or not ip:
         return make_response({}, 400)
 
     try:
-        custom_domain = resolver.modify_custom_domain(domain_body, ip)
+        custom_domain = resolver.modify_custom_domain(domain, domain_body, ip)
     except DomainNotFoundError:
         return make_response({}, 404)
 
-    response = make_response(custom_domain, 200)
+    response = make_response(json.dumps(custom_domain.__dict__), 200)
     response.mimetype = "application/json"
     return response
 

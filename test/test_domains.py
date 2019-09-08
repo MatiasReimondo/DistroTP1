@@ -75,3 +75,56 @@ def test_created_custom_domains_show_up_in_resolver(client):
     response = client.get('/api/domains/custom.domain.com')
     assert response.json['ip'] == '1.1.1.1'
     assert response.json['custom'] is True
+
+
+def test_modify_domain(client, custom_domain):
+    response = client.put(f'/api/custom-domains/{custom_domain.domain}',
+                          json={'ip': '1.1.1.1',
+                                'domain': 'other.custom.domain.com'})
+
+    assert response.status_code == 200
+
+
+def test_modify_domain_response(client, custom_domain):
+    response = client.put(f'/api/custom-domains/{custom_domain.domain}',
+                          json={'ip': '1.1.1.1',
+                                'domain': 'other.custom.domain.com'})
+
+    assert response.json['ip'] == '1.1.1.1'
+    assert response.json['domain'] == 'other.custom.domain.com'
+
+
+def test_modify_non_existing_domain(client):
+    response = client.put(f'/api/custom-domains/invalid.domain.com',
+                          json={'ip': '1.1.1.1',
+                                'domain': 'other.custom.domain.com'})
+    assert response.status_code == 404
+
+
+def test_modify_domain_missing_ip(client, custom_domain):
+    response = client.put(f'/api/custom-domains/{custom_domain.domain}',
+                          json={'domain': 'other.custom.domain.com'})
+
+    assert response.status_code == 400
+    assert response.json == {}
+
+
+def test_modify_domain_missing_domain(client, custom_domain):
+    response = client.put(f'/api/custom-domains/{custom_domain.domain}',
+                          json={'ip': '1.1.1.1'})
+    assert response.status_code == 400
+    assert response.json == {}
+
+
+def test_modified_domain_shows_in_get(client, custom_domain):
+    put_response = client.put(f'/api/custom-domains/{custom_domain.domain}',
+                              json={'domain': 'other.custom.domain.com',
+                                    'ip': '2.2.2.2'})
+
+    assert put_response.status_code == 200
+
+    response = client.get('/api/domains/other.custom.domain.com')
+
+    assert response.json['ip'] == '2.2.2.2'
+    assert response.json['domain'] == 'other.custom.domain.com'
+    assert response.json['custom'] is True

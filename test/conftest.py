@@ -18,4 +18,11 @@ def client():
 
 @pytest.fixture(autouse=True)
 def reset_resolver():
+    yield
     Resolver.get_instance().domains = {}
+
+
+@pytest.fixture
+def custom_domain():
+    return Resolver.get_instance().save_custom_domain('custom.domain.com',
+                                                      '1.1.1.1')
