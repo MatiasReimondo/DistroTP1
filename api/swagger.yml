@@ -33,7 +33,7 @@ paths:
                 $ref: '#/components/schemas/Domain'
         404:
           description: "Dominio no encontrado"
-  /custom-domain:
+  /custom-domains:
     post:
       operationId: "api.domains.agregar_dominio"
       tags:
@@ -56,7 +56,26 @@ paths:
                 $ref: '#/components/schemas/Domain'
         400:
           description: "Dominio duplicado"
-  /custom-domain/{domain}:
+    get:
+      operationId: "api.domains.obtener_dominios"
+      tags:
+        - "Domains"
+      summary: "Obtiene todos los dominios custom"
+      description: "Obtiene todos los dominios, tambien se puede aplicar un filtro"
+      parameters:
+        - in: query
+          name: q
+          schema:
+            type: string
+          description: Filtro para la query
+      responses:
+        200:
+          description: "Lista con los dominios"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Items'
+  /custom-domains/{domain}:
     put:
       operationId: "api.domains.modificar_dominio"
       tags:
@@ -212,6 +231,10 @@ components:
           type: "string"
         ip:
           type: "string"
+    Items:
+      type: "array"
+      items:
+        type: "Domain"
     Alumno:
       type: "object"
       properties:

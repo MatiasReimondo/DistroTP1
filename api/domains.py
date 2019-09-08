@@ -1,7 +1,8 @@
 import json
-from flask import abort, make_response
+from flask import abort, make_response, request
 from .resolver import Resolver
 from .domain import Domain
+from .custom_domains import CustomDomains
 
 resolver = Resolver()
 
@@ -17,7 +18,7 @@ def obtener_dominio(domain):
     response.mimetype = 'application/json'
     return response
 
-# POST /api/custom-domain
+# POST /api/custom-domains
 def agregar_dominio(**kwargs):
     custom = kwargs.get('body')
     domain = custom.get('domain')
@@ -34,7 +35,7 @@ def agregar_dominio(**kwargs):
     response.mimetype = 'application/json'
     return response
 
-#PUT /api/custom-domain/{domain}
+#PUT /api/custom-domains/{domain}
 def modificar_dominio(domain, **kwargs):
     custom = kwargs.get('body')
     domain_body = custom.get('domain')
@@ -53,7 +54,7 @@ def modificar_dominio(domain, **kwargs):
     response.mimetype = 'application/json'
     return response
 
-#DELETE /api/custom-domain/{domain}
+#DELETE /api/custom-domains/{domain}
 def eliminar_dominio(domain):
     domain_found = resolver.search_custom_domain(domain)
     if domain_found.custom == False:
@@ -64,6 +65,21 @@ def eliminar_dominio(domain):
     response = make_response(result, 200)
     response.mimetype = 'application/json'
     return response
+
+#GET /api/custom-domain?q=<string>
+def obtener_dominios():
+    items = []
+    param = request.args.get('q')
+    if not param:
+        items = resolver.get_all_customs()
+    else:
+        items = resolver.get_customs_filter(param)
+    customs = json.dumps(CustomDomains(items).__dict__)
+    response = make_response(customs, 200)
+    response.mimetype = 'application/json'
+    return response
+
+
 
 
 
