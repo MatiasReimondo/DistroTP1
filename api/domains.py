@@ -40,18 +40,34 @@ def modificar_dominio(domain, **kwargs):
     domain_body = custom.get('domain')
     ip = custom.get('ip')
 
-    if domain != domain_body:
-        make_response(custom,400)
     if not domain_body or not ip:
         return make_response(custom,400)
 
     domain_found = resolver.search_custom_domain(domain)
     if domain_found.custom == False:
         return make_response({},404)
+
     resolver.remove_custom_domain(domain)
     new_custom = resolver.save_custom_domain(domain_body,ip)
     response = make_response(new_custom, 200)
     response.mimetype = 'application/json'
     return response
+
+#DELETE /api/custom-domain/{domain}
+def eliminar_dominio(domain):
+    domain_found = resolver.search_custom_domain(domain)
+    if domain_found.custom == False:
+        return make_response({},404)
+    resolver.remove_custom_domain(domain)
+    result = {}
+    result['domain'] = domain
+    response = make_response(result, 200)
+    response.mimetype = 'application/json'
+    return response
+
+
+
+
+
 
 

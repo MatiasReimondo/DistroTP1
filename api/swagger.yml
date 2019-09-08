@@ -92,6 +92,28 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/CustomDomain'
+    delete:
+      operationId: "api.domains.eliminar_dominio"
+      tags:
+        - "Domains"
+      summary: "Borra un dominio custom"
+      description: "Borra un dominio existente en el sistema"
+      parameters:
+        - in: path
+          name: domain
+          required: true
+          schema:
+            type: string
+          description: El nombre del dominio
+      responses:
+        200:
+          description: "borro el custom domain correctamente"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Domain'
+        404:
+          description: "Dominio no encontrado"
   /alumnos:
     get:
       operationId: "api.alumnos.obtener_todos"
