@@ -234,7 +234,7 @@ components:
     Items:
       type: "array"
       items:
-        type: "Domain"
+        type: "object"
     Alumno:
       type: "object"
       properties:
