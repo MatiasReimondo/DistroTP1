@@ -1,10 +1,12 @@
 import json
-from flask import abort, make_response, request
+from flask import make_response, request
+
+from api.exceptions import DomainNotFoundError, DomainAlreadyExistsError
 from .resolver import Resolver
-from .domain import Domain
 from .custom_domains import CustomDomains
 
 resolver = Resolver()
+
 
 # GET /domains/{domain}
 # Falta round robin
@@ -19,6 +21,19 @@ def obtener_dominio(domain):
     return response
 
 
+# GET /api/custom-domain?q=<string>
+def obtener_dominios():
+    param = request.args.get("q")
+    if not param:
+        items = resolver.get_all_customs()
+    else:
+        items = resolver.get_customs_filter(param)
+    customs = json.dumps(CustomDomains(items).__dict__)
+    response = make_response(customs, 200)
+    response.mimetype = "application/json"
+    return response
+
+
 # POST /api/custom-domains
 def agregar_dominio(**kwargs):
     custom = kwargs.get("body")
@@ -27,11 +42,11 @@ def agregar_dominio(**kwargs):
     if not domain or not ip:
         return make_response({}, 400)
 
-    dup = resolver.search_custom_domain(domain).custom
-    if dup:
+    try:
+        new_custom = resolver.save_custom_domain(domain, ip)
+    except DomainAlreadyExistsError:
         return make_response({}, 400)
 
-    new_custom = resolver.save_custom_domain(domain, ip)
     response = make_response(new_custom, 201)
     response.mimetype = "application/json"
     return response
@@ -43,42 +58,27 @@ def modificar_dominio(domain, **kwargs):
     domain_body = custom.get("domain")
     ip = custom.get("ip")
 
-    if not domain_body or not ip:
-        return make_response(custom, 400)
+    if not domain_body or not ip or domain != domain_body:
+        return make_response({}, 400)
 
-    domain_found = resolver.search_custom_domain(domain)
-    if domain_found.custom == False:
+    try:
+        custom_domain = resolver.modify_custom_domain(domain_body, ip)
+    except DomainNotFoundError:
         return make_response({}, 404)
 
-    resolver.remove_custom_domain(domain)
-    new_custom = resolver.save_custom_domain(domain_body, ip)
-    response = make_response(new_custom, 200)
+    response = make_response(custom_domain, 200)
     response.mimetype = "application/json"
     return response
 
 
 # DELETE /api/custom-domains/{domain}
 def eliminar_dominio(domain):
-    domain_found = resolver.search_custom_domain(domain)
-    if domain_found.custom == False:
+    try:
+        resolver.remove_custom_domain(domain)
+    except DomainNotFoundError:
         return make_response({}, 404)
-    resolver.remove_custom_domain(domain)
-    result = {}
-    result["domain"] = domain
+
+    result = {"domain": domain}
     response = make_response(result, 200)
-    response.mimetype = "application/json"
-    return response
-
-
-# GET /api/custom-domain?q=<string>
-def obtener_dominios():
-    items = []
-    param = request.args.get("q")
-    if not param:
-        items = resolver.get_all_customs()
-    else:
-        items = resolver.get_customs_filter(param)
-    customs = json.dumps(CustomDomains(items).__dict__)
-    response = make_response(customs, 200)
     response.mimetype = "application/json"
     return response
