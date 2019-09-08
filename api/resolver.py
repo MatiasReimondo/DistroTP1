@@ -5,6 +5,14 @@ import json
 
 
 class Resolver:
+    instance = None
+
+    @classmethod
+    def get_instance(cls):  # Singleton!
+        if cls.instance is None:
+            cls.instance = cls()
+        return cls.instance
+
     def __init__(self):
         self.domains = {}
         self.dns_resolver = DNSResolver()

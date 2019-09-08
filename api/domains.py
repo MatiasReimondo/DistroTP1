@@ -5,7 +5,7 @@ from api.exceptions import DomainNotFoundError, DomainAlreadyExistsError
 from .resolver import Resolver
 from .custom_domains import CustomDomains
 
-resolver = Resolver()
+resolver = Resolver.get_instance()
 
 
 # GET /domains/{domain}
