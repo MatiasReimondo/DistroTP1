@@ -10,6 +10,52 @@ servers:
 
 # Paths servidos por la aplicación
 paths:
+  /domains/{domain}:
+    get:
+      operationId: "api.domains.obtener_dominio"
+      tags:
+        - "Domains"
+      summary: "Obtiene la IP asociada a un dominio en particular"
+      description: "Obtiene la IP de un dominio ya sea custom o no"
+      parameters:
+        - in: path
+          name: domain
+          required: true
+          schema:
+            type: string
+          description: El nombre del dominio
+      responses:
+        200:
+          description: "Se obtuvo el dominio correctamente"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Domain'
+        404:
+          description: "Dominio no encontrado"
+  /custom-domain:
+    post:
+      operationId: "api.domains.agregar_dominio"
+      tags:
+        - "Domains"
+      summary: "Crea un dominio custom"
+      description: "Crea un nuevo dominio y lo agrega a la lista de dominios custom"
+      requestBody:
+        required: true
+        x-body-name: 'domain'
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CustomDomain'
+      responses:
+        201:
+          description: "Se creo el custom domain correctamente"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Domain'
+        400:
+          description: "Dominio duplicado"
   /alumnos:
     get:
       operationId: "api.alumnos.obtener_todos"
@@ -92,6 +138,22 @@ paths:
 # Declaración de tipos de datos
 components:
   schemas:
+    Domain:
+      type: "object"
+      properties:
+        domain:
+          type: "string"
+        ip:
+          type: "string"
+        custom:
+          type: "boolean"
+    CustomDomain:
+      type: "object"
+      properties:
+        domain:
+          type: "string"
+        ip:
+          type: "string"
     Alumno:
       type: "object"
       properties:
