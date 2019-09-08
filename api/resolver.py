@@ -14,7 +14,7 @@ class Resolver:
         return cls.instance
 
     def __init__(self):
-        self.domains = {}
+        self.custom_domains = {}
         self.dns_resolver = DNSResolver()
 
     def resolve(self, domain):
@@ -28,39 +28,39 @@ class Resolver:
         return self.dns_resolver.resolve(domain)
 
     def _search_custom_domain(self, domain):
-        if domain not in self.domains:
+        if domain not in self.custom_domains:
             raise DomainNotFoundError
 
-        return Domain(domain, self.domains[domain].ip, True)
+        return Domain(domain, self.custom_domains[domain].ip, True)
 
     def save_custom_domain(self, domain, ip):
-        if domain in self.domains:
+        if domain in self.custom_domains:
             raise DomainAlreadyExistsError
         new_custom = Domain(domain, ip, True)
-        self.domains[domain] = new_custom
+        self.custom_domains[domain] = new_custom
         return new_custom
 
     def remove_custom_domain(self, domain):
-        if domain not in self.domains:
+        if domain not in self.custom_domains:
             raise DomainNotFoundError
-        custom = self.domains.pop(domain)
+        custom = self.custom_domains.pop(domain)
         return custom
 
     def modify_custom_domain(self, domain_name, new_domain, ip):
-        if domain_name not in self.domains:
+        if domain_name not in self.custom_domains:
             raise DomainNotFoundError
 
-        domain = self.domains[domain_name]
+        domain = self.custom_domains[domain_name]
 
         domain.domain = new_domain
         domain.ip = ip
-        self.domains[new_domain] = domain
-        del self.domains[domain_name]
+        self.custom_domains[new_domain] = domain
+        del self.custom_domains[domain_name]
         return domain
 
     def get_all_customs(self):
         result = []
-        for custom_domain in self.domains.values():
+        for custom_domain in self.custom_domains.values():
             json_domain = custom_domain.__dict__
             result.append(json_domain)
         return result
