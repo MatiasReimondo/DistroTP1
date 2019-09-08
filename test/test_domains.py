@@ -150,3 +150,39 @@ def test_deleted_domain_does_not_show_up_in_get(client, custom_domain):
     response = client.get(f'/api/domains/{custom_domain.domain}')
 
     assert response.status_code == 404
+
+
+def test_get_all_custom_domains_initially_empty(client):
+    response = client.get('/api/custom-domains')
+
+    assert response.status_code == 200
+    assert response.json['items'] == []
+
+
+def test_get_all_custom_domains(client, custom_domain):
+    response = client.get('/api/custom-domains')
+
+    assert len(response.json['items']) == 1
+    assert response.json['items'][0]['domain'] == custom_domain.domain
+
+
+def test_get_multiple_custom_domains(client, custom_domain):
+    client.post('/api/custom-domains',
+                json={'domain': 'other.custom-domain-tp1.com',
+                      'ip': '1.1.1.1'})
+    response = client.get('/api/custom-domains')
+    assert len(response.json['items']) == 2
+    domains = [x['domain'] for x in response.json['items']]
+
+    assert custom_domain.domain in domains
+    assert 'other.custom-domain-tp1.com' in domains
+
+
+def test_custom_domains_filter(client, custom_domain):
+    response = client.get(f'/api/custom-domains?q={custom_domain.domain}')
+    assert len(response.json['items']) == 1
+
+
+def test_custom_domains_filter_all_filtered(client, custom_domain):
+    response = client.get(f'/api/custom-domains?q=something_else')
+    assert len(response.json['items']) == 0

@@ -61,14 +61,10 @@ class Resolver:
     def get_all_customs(self):
         result = []
         for custom_domain in self.domains.values():
-            json_domain = json.loads(custom_domain)
+            json_domain = custom_domain.__dict__
             result.append(json_domain)
         return result
 
-    def get_customs_filter(self, filter):
-        result = []
-        for custom_domain in self.domains.values():
-            json_domain = json.loads(custom_domain)
-            if filter in json_domain.get("domain"):
-                result.append(json_domain)
-        return result
+    def get_customs_filter(self, filter_term):
+        result = self.get_all_customs()
+        return [x for x in result if filter_term in x['domain']]
