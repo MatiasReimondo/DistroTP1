@@ -38,6 +38,11 @@ class Resolver:
         self.domains[domain] = new_custom
         return new_custom
 
+    def remove_custom_domain(self, domain):
+        custom = self.domains.pop(domain,None)
+        return custom
+
+
 
 
 

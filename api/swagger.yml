@@ -56,6 +56,42 @@ paths:
                 $ref: '#/components/schemas/Domain'
         400:
           description: "Dominio duplicado"
+  /custom-domain/{domain}:
+    put:
+      operationId: "api.domains.modificar_dominio"
+      tags:
+        - "Domains"
+      summary: "Edita un dominio custom"
+      description: "Edita un dominio ya existente en el sistema"
+      parameters:
+        - in: path
+          name: domain
+          required: true
+          schema:
+            type: string
+          description: El nombre del dominio
+      requestBody:
+        required: true
+        x-body-name: 'domain'
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CustomDomain'
+      responses:
+        200:
+          description: "Se modifico el custom domain correctamente"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Domain'
+        404:
+          description: "Dominio no encontrado"
+        400:
+          description: "Body incorrecto"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CustomDomain'
   /alumnos:
     get:
       operationId: "api.alumnos.obtener_todos"
