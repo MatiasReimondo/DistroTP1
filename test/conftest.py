@@ -24,5 +24,5 @@ def reset_resolver():
 
 @pytest.fixture
 def custom_domain():
-    return Resolver.get_instance().save_custom_domain('custom.domain.com',
+    return Resolver.get_instance().save_custom_domain('distro.tp1.com',
                                                       '1.1.1.1')

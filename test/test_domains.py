@@ -128,3 +128,25 @@ def test_modified_domain_shows_in_get(client, custom_domain):
     assert response.json['ip'] == '2.2.2.2'
     assert response.json['domain'] == 'other.custom.domain.com'
     assert response.json['custom'] is True
+
+
+def test_delete_non_existent_domain(client):
+    response = client.delete('/api/custom-domains/invalid.domain.com')
+
+    assert response.status_code == 404
+    assert response.json == {}
+
+
+def test_delete_domain(client, custom_domain):
+    response = client.delete(f'/api/custom-domains/{custom_domain.domain}')
+
+    assert response.status_code == 200
+    assert response.json['domain'] == custom_domain.domain
+
+
+def test_deleted_domain_does_not_show_up_in_get(client, custom_domain):
+    client.delete(f'/api/custom-domains/{custom_domain.domain}')
+
+    response = client.get(f'/api/domains/{custom_domain.domain}')
+
+    assert response.status_code == 404
