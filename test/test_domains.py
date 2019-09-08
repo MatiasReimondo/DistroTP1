@@ -65,3 +65,13 @@ def test_create_new_custom_domain_already_exists(client):
                                  'ip': '2.2.2.2'})
     assert response.status_code == 400
     assert response.json == {}
+
+
+def test_created_custom_domains_show_up_in_resolver(client):
+    client.post('/api/custom-domains',
+                json={'domain': 'custom.domain.com',
+                      'ip': '1.1.1.1'})
+
+    response = client.get('/api/domains/custom.domain.com')
+    assert response.json['ip'] == '1.1.1.1'
+    assert response.json['custom'] is True
