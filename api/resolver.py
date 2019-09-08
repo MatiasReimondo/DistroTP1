@@ -22,7 +22,7 @@ class Resolver:
             domain_resolve = self._search_custom_domain(domain)
             return domain_resolve
         except DomainNotFoundError:
-            return self._resolve_dns(domain)[0]
+            return self._resolve_dns(domain)[0]  # Por ahora devolvemos solo el primero
 
     def _resolve_dns(self, domain):
         return self.dns_resolver.resolve(domain)
