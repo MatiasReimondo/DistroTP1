@@ -33,7 +33,7 @@ paths:
                 $ref: '#/components/schemas/Domain'
         404:
           description: "Dominio no encontrado"
-  /custom-domain:
+  /custom-domains:
     post:
       operationId: "api.domains.agregar_dominio"
       tags:
@@ -56,6 +56,83 @@ paths:
                 $ref: '#/components/schemas/Domain'
         400:
           description: "Dominio duplicado"
+    get:
+      operationId: "api.domains.obtener_dominios"
+      tags:
+        - "Domains"
+      summary: "Obtiene todos los dominios custom"
+      description: "Obtiene todos los dominios, tambien se puede aplicar un filtro"
+      parameters:
+        - in: query
+          name: q
+          schema:
+            type: string
+          description: Filtro para la query
+      responses:
+        200:
+          description: "Lista con los dominios"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Items'
+  /custom-domains/{domain}:
+    put:
+      operationId: "api.domains.modificar_dominio"
+      tags:
+        - "Domains"
+      summary: "Edita un dominio custom"
+      description: "Edita un dominio ya existente en el sistema"
+      parameters:
+        - in: path
+          name: domain
+          required: true
+          schema:
+            type: string
+          description: El nombre del dominio
+      requestBody:
+        required: true
+        x-body-name: 'domain'
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CustomDomain'
+      responses:
+        200:
+          description: "Se modifico el custom domain correctamente"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Domain'
+        404:
+          description: "Dominio no encontrado"
+        400:
+          description: "Body incorrecto"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CustomDomain'
+    delete:
+      operationId: "api.domains.eliminar_dominio"
+      tags:
+        - "Domains"
+      summary: "Borra un dominio custom"
+      description: "Borra un dominio existente en el sistema"
+      parameters:
+        - in: path
+          name: domain
+          required: true
+          schema:
+            type: string
+          description: El nombre del dominio
+      responses:
+        200:
+          description: "borro el custom domain correctamente"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Domain'
+        404:
+          description: "Dominio no encontrado"
   /alumnos:
     get:
       operationId: "api.alumnos.obtener_todos"
@@ -154,6 +231,10 @@ components:
           type: "string"
         ip:
           type: "string"
+    Items:
+      type: "array"
+      items:
+        type: "object"
     Alumno:
       type: "object"
       properties:

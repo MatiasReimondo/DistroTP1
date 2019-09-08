@@ -38,6 +38,26 @@ class Resolver:
         self.domains[domain] = new_custom
         return new_custom
 
+    def remove_custom_domain(self, domain):
+        custom = self.domains.pop(domain,None)
+        return custom
+
+    def get_all_customs(self):
+        result = []
+        for custom_domain in self.domains.values():
+            json_domain = json.loads(custom_domain)
+            result.append(json_domain)
+        return result
+
+    def get_customs_filter(self, filter):
+        result = []
+        for custom_domain in self.domains.values():
+            json_domain = json.loads(custom_domain)
+            if filter in json_domain.get('domain'):
+                result.append(json_domain)
+        return result
+
+
 
 
 
