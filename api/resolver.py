@@ -1,5 +1,4 @@
-import dns.resolver
-
+from api.dns_resolver import DNSResolver
 from api.exceptions import DomainNotFoundError, DomainAlreadyExistsError
 from .domain import Domain
 import json
@@ -8,25 +7,19 @@ import json
 class Resolver:
     def __init__(self):
         self.domains = {}
+        self.dns_resolver = DNSResolver()
 
     def resolve(self, domain):
         try:
-            domain_resolve = self.search_custom_domain(domain)
+            domain_resolve = self._search_custom_domain(domain)
             return domain_resolve
         except DomainNotFoundError:
-            return self.resolve_dns(domain)[0]
+            return self._resolve_dns(domain)[0]
 
-    def resolve_dns(self, domain):
-        results = []
-        result = dns.resolver.query(domain)
-        for answer in result.response.answer:
-            results.append(self.parse_domain(domain, str(answer)))
-        return results
+    def _resolve_dns(self, domain):
+        return self.dns_resolver.resolve(domain)
 
-    def parse_domain(self, domain, domain_line):
-        return Domain(domain, domain_line.split(" ")[4], False)
-
-    def search_custom_domain(self, domain):
+    def _search_custom_domain(self, domain):
         found = False
         for custom_domain in self.domains.values():
             json_domain = json.loads(custom_domain)
