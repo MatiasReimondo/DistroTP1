@@ -1,7 +1,6 @@
 from api.dns_resolver import DNSResolver
 from api.exceptions import DomainNotFoundError, DomainAlreadyExistsError
 from .domain import Domain
-import json
 
 
 class Resolver:
@@ -15,17 +14,28 @@ class Resolver:
 
     def __init__(self):
         self.custom_domains = {}
+        self.domains = {}
         self.dns_resolver = DNSResolver()
 
     def resolve(self, domain):
         try:
-            domain_resolve = self._search_custom_domain(domain)
-            return domain_resolve
+            return self._search_custom_domain(domain)
         except DomainNotFoundError:
-            return self._resolve_dns(domain)[0]  # Por ahora devolvemos solo el primero
+            return self._search_non_custom_domain(domain)
 
-    def _resolve_dns(self, domain):
-        return self.dns_resolver.resolve(domain)
+    def _search_non_custom_domain(self, domain):
+        if domain not in self.domains:
+            domain_info = self._fetch_from_dns(domain)
+            self.domains[domain] = domain_info
+
+        return self._domain_from_round_robin(domain)
+
+    def _fetch_from_dns(self, domain):
+        domains = self.dns_resolver.resolve(domain)
+        return {
+            'domains': domains,
+            'current': 0
+        }
 
     def _search_custom_domain(self, domain):
         if domain not in self.custom_domains:
@@ -68,3 +78,9 @@ class Resolver:
     def get_customs_filter(self, filter_term):
         result = self.get_all_customs()
         return [x for x in result if filter_term in x["domain"]]
+
+    def _domain_from_round_robin(self, domain):
+        domain_info = self.domains[domain]
+        result = domain_info['domains'][domain_info['current']]
+        domain_info['current'] = (domain_info['current'] + 1) % len(domain_info['domains'])
+        return result
