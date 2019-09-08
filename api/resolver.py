@@ -67,4 +67,4 @@ class Resolver:
 
     def get_customs_filter(self, filter_term):
         result = self.get_all_customs()
-        return [x for x in result if filter_term in x['domain']]
+        return [x for x in result if filter_term in x["domain"]]

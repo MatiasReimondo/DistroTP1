@@ -4,7 +4,6 @@ from api.domain import Domain
 
 
 class DNSResolver:
-
     def resolve(self, name):
         results = []
         result = resolver.query(name)
