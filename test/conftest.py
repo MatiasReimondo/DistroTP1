@@ -1,5 +1,6 @@
 import pytest
 
+from api.resolver import Resolver
 from app import create_app
 
 
@@ -9,7 +10,18 @@ def app():
     return _app
 
 
-@pytest.fixture(scope='module')
+@pytest.fixture(scope="module")
 def client():
     with create_app().app.test_client() as c:
         yield c
+
+
+@pytest.fixture(autouse=True)
+def reset_resolver():
+    yield
+    Resolver.get_instance().domains = {}
+
+
+@pytest.fixture
+def custom_domain():
+    return Resolver.get_instance().save_custom_domain("distro.tp1.com", "1.1.1.1")
