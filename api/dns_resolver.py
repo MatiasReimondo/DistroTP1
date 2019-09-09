@@ -9,7 +9,12 @@ class DNSResolver:
         result = resolver.query(name)
         for answer in result.response.answer:
             results.append(self.parse_domain(name, str(answer)))
-        return results
+
+        result_flat = []
+        [result_flat.extend(result) for result in results]
+        return result_flat
 
     def parse_domain(self, name, response_line):
-        return Domain(name, response_line.split(" ")[4], False)
+        lines = response_line.split('\n')
+
+        return [Domain(name, line.split(" ")[4], False) for line in lines]

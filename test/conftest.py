@@ -19,7 +19,7 @@ def client():
 @pytest.fixture(autouse=True)
 def reset_resolver():
     yield
-    Resolver.get_instance().domains = {}
+    Resolver.get_instance().custom_domains = {}
 
 
 @pytest.fixture
