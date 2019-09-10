@@ -33,6 +33,10 @@ paths:
                 $ref: '#/components/schemas/Domain'
         404:
           description: "Dominio no encontrado"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDomain'
   /custom-domains:
     post:
       operationId: "api.domains.agregar_dominio"
@@ -56,6 +60,10 @@ paths:
                 $ref: '#/components/schemas/Domain'
         400:
           description: "Dominio duplicado"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDomain'
     get:
       operationId: "api.domains.obtener_dominios"
       tags:
@@ -105,12 +113,16 @@ paths:
                 $ref: '#/components/schemas/Domain'
         404:
           description: "Dominio no encontrado"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDomain'
         400:
           description: "Body incorrecto"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/CustomDomain'
+                $ref: '#/components/schemas/ErrorDomain'
     delete:
       operationId: "api.domains.eliminar_dominio"
       tags:
@@ -133,6 +145,10 @@ paths:
                 $ref: '#/components/schemas/Domain'
         404:
           description: "Dominio no encontrado"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDomain'
 # Declaración de tipos de datos
 components:
   schemas:
@@ -152,30 +168,15 @@ components:
           type: "string"
         ip:
           type: "string"
+    ErrorDomain:
+      type: "object"
+      properties:
+        error:
+          type: "string"
     Items:
       type: "array"
       items:
         type: "object"
-    Alumno:
-      type: "object"
-      properties:
-        id:
-          type: "number"
-        nombre:
-          type: "string"
-        dni:
-          type: "string"
-        padron:
-          type: "string"
-    InputAlumno:
-      type: "object"
-      properties:
-        nombre:
-          type: "string"
-        dni:
-          type: "string"
-        padron:
-          type: "string"
     Error:
       type: "object"
       properties:
