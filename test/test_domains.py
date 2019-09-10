@@ -20,7 +20,7 @@ def test_domain_not_found(client):
 
 def test_domain_not_found_empty_body(client):
     response = client.get("/api/domains/notfound.uba.ar")
-    assert response.json == {}
+    assert response.json == {'error': 'domain not found'}
 
 
 def test_create_new_custom_domain_status_code(client):
@@ -44,13 +44,13 @@ def test_create_new_custom_domain_body(client):
 def test_create_new_custom_domain_no_ip(client):
     response = client.post("/api/custom-domains", json={"domain": "custom.domain.com"})
     assert response.status_code == 400
-    assert response.json == {}
+    assert response.json == {'error': 'custom domain already exists'}
 
 
 def test_create_new_custom_domain_no_domain(client):
     response = client.post("/api/custom-domains", json={"ip": "1.1.1.1"})
     assert response.status_code == 400
-    assert response.json == {}
+    assert response.json == {'error': 'custom domain already exists'}
 
 
 def test_create_new_custom_domain_already_exists(client):
@@ -62,7 +62,7 @@ def test_create_new_custom_domain_already_exists(client):
         "/api/custom-domains", json={"domain": "custom.domain.com", "ip": "2.2.2.2"}
     )
     assert response.status_code == 400
-    assert response.json == {}
+    assert response.json == {'error': 'custom domain already exists'}
 
 
 def test_created_custom_domains_show_up_in_resolver(client):
@@ -109,7 +109,7 @@ def test_modify_domain_missing_ip(client, custom_domain):
     )
 
     assert response.status_code == 400
-    assert response.json == {}
+    assert response.json == {'error': 'payload is invalid'}
 
 
 def test_modify_domain_missing_domain(client, custom_domain):
@@ -117,7 +117,7 @@ def test_modify_domain_missing_domain(client, custom_domain):
         f"/api/custom-domains/{custom_domain.domain}", json={"ip": "1.1.1.1"}
     )
     assert response.status_code == 400
-    assert response.json == {}
+    assert response.json == {'error': 'payload is invalid'}
 
 
 def test_modified_domain_shows_in_get(client, custom_domain):
@@ -139,7 +139,7 @@ def test_delete_non_existent_domain(client):
     response = client.delete("/api/custom-domains/invalid.domain.com")
 
     assert response.status_code == 404
-    assert response.json == {}
+    assert response.json == {'error': 'domain not found'}
 
 
 def test_delete_domain(client, custom_domain):
