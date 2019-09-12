@@ -17,10 +17,7 @@ def obtener_dominio(domain):
     try:
         domains_answer = resolver.resolve(domain)
     except:
-        error = json.dumps(Error(DOMAIN_NOT_FOUND).__dict__)
-        response = make_response(error, 404)
-        response.mimetype = "application/json"
-        return response
+        return respuesta_error(404,DOMAIN_NOT_FOUND)
     result = json.dumps(domains_answer.__dict__)
     response = make_response(result, 200)
     response.mimetype = "application/json"
@@ -46,18 +43,12 @@ def agregar_dominio(**kwargs):
     domain = custom.get("domain")
     ip = custom.get("ip")
     if not domain or not ip:
-        error = json.dumps(Error(BAD_DOMAIN).__dict__)
-        response = make_response(error, 400)
-        response.mimetype = "application/json"
-        return make_response(response, 400)
+        return respuesta_error(400, BAD_DOMAIN)
 
     try:
         new_custom = resolver.save_custom_domain(domain, ip)
     except DomainAlreadyExistsError:
-        error = json.dumps(Error(BAD_DOMAIN).__dict__)
-        response = make_response(error, 400)
-        response.mimetype = "application/json"
-        return make_response(response, 400)
+        return respuesta_error(400, BAD_DOMAIN)
 
     response = make_response(json.dumps(new_custom.__dict__), 201)
     response.mimetype = "application/json"
@@ -71,18 +62,12 @@ def modificar_dominio(domain, **kwargs):
     ip = custom.get("ip")
 
     if not domain_body or not ip:
-        error = json.dumps(Error(INVALID_PAYLOAD).__dict__)
-        response = make_response(error, 400)
-        response.mimetype = "application/json"
-        return response
+        return respuesta_error(400, INVALID_PAYLOAD)
 
     try:
         custom_domain = resolver.modify_custom_domain(domain, domain_body, ip)
     except DomainNotFoundError:
-        error = json.dumps(Error(DOMAIN_NOT_FOUND).__dict__)
-        response = make_response(error, 404)
-        response.mimetype = "application/json"
-        return response
+        return respuesta_error(404, DOMAIN_NOT_FOUND)
 
     response = make_response(json.dumps(custom_domain.__dict__), 200)
     response.mimetype = "application/json"
@@ -94,12 +79,15 @@ def eliminar_dominio(domain):
     try:
         resolver.remove_custom_domain(domain)
     except DomainNotFoundError:
-        error = json.dumps(Error(DOMAIN_NOT_FOUND).__dict__)
-        response = make_response(error, 404)
-        response.mimetype = "application/json"
-        return response
+        return respuesta_error(404, DOMAIN_NOT_FOUND)
 
     result = {"domain": domain}
     response = make_response(result, 200)
+    response.mimetype = "application/json"
+    return response
+
+def respuesta_error(codigo, mensaje):
+    error = json.dumps(Error(mensaje).__dict__)
+    response = make_response(error, codigo)
     response.mimetype = "application/json"
     return response
