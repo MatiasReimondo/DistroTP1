@@ -32,10 +32,7 @@ class Resolver:
 
     def _fetch_from_dns(self, domain):
         domains = self.dns_resolver.resolve(domain)
-        return {
-            'domains': domains,
-            'current': 0
-        }
+        return {"domains": domains, "current": 0}
 
     def _search_custom_domain(self, domain):
         if domain not in self.custom_domains:
@@ -61,11 +58,7 @@ class Resolver:
             raise DomainNotFoundError
 
         domain = self.custom_domains[domain_name]
-
-        domain.domain = new_domain
         domain.ip = ip
-        self.custom_domains[new_domain] = domain
-        del self.custom_domains[domain_name]
         return domain
 
     def get_all_customs(self):
@@ -81,6 +74,8 @@ class Resolver:
 
     def _domain_from_round_robin(self, domain):
         domain_info = self.domains[domain]
-        result = domain_info['domains'][domain_info['current']]
-        domain_info['current'] = (domain_info['current'] + 1) % len(domain_info['domains'])
+        result = domain_info["domains"][domain_info["current"]]
+        domain_info["current"] = (domain_info["current"] + 1) % len(
+            domain_info["domains"]
+        )
         return result

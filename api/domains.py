@@ -8,16 +8,16 @@ from .error import Error
 
 resolver = Resolver.get_instance()
 
-DOMAIN_NOT_FOUND = 'domain not found'
-BAD_DOMAIN = 'custom domain already exists'
-INVALID_PAYLOAD = 'payload is invalid'
+DOMAIN_NOT_FOUND = "domain not found"
+BAD_DOMAIN = "custom domain already exists"
+INVALID_PAYLOAD = "payload is invalid"
 
 # GET /domains/{domain}
 def obtener_dominio(domain):
     try:
         domains_answer = resolver.resolve(domain)
     except:
-        return respuesta_error(404,DOMAIN_NOT_FOUND)
+        return respuesta_error(404, DOMAIN_NOT_FOUND)
     result = json.dumps(domains_answer.__dict__)
     response = make_response(result, 200)
     response.mimetype = "application/json"
@@ -61,7 +61,7 @@ def modificar_dominio(domain, **kwargs):
     domain_body = custom.get("domain")
     ip = custom.get("ip")
 
-    if not domain_body or not ip:
+    if not domain_body or not ip or domain_body != domain:
         return respuesta_error(400, INVALID_PAYLOAD)
 
     try:
@@ -85,6 +85,7 @@ def eliminar_dominio(domain):
     response = make_response(result, 200)
     response.mimetype = "application/json"
     return response
+
 
 def respuesta_error(codigo, mensaje):
     error = json.dumps(Error(mensaje).__dict__)

@@ -1,3 +1,3 @@
 class Error:
-    def __init__(self,error):
+    def __init__(self, error):
         self.error = error

@@ -42,7 +42,7 @@ def test_round_robin_loops_back():
 
 
 def legal_ip_address(ip):
-    ipv4_valid = string.digits + '.'
+    ipv4_valid = string.digits + "."
     for char in ip:
         if char not in ipv4_valid:
             return False

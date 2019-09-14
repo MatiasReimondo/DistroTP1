@@ -15,6 +15,6 @@ class DNSResolver:
         return result_flat
 
     def parse_domain(self, name, response_line):
-        lines = response_line.split('\n')
+        lines = response_line.split("\n")
 
         return [Domain(name, line.split(" ")[4], False) for line in lines]
