@@ -41,6 +41,13 @@ def test_round_robin_loops_back():
     assert length > 1
 
 
+def test_cname_is_ignored():
+    resolver = Resolver()
+    first_answer = resolver.resolve("productforums.google.com")
+
+    assert legal_ip_address(first_answer.ip)
+
+
 def legal_ip_address(ip):
     ipv4_valid = string.digits + "."
     for char in ip:

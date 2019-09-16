@@ -16,5 +16,5 @@ class DNSResolver:
 
     def parse_domain(self, name, response_line):
         lines = response_line.split("\n")
-
+        lines = [line for line in lines if 'CNAME' not in line]
         return [Domain(name, line.split(" ")[4], False) for line in lines]

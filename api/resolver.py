@@ -24,9 +24,8 @@ class Resolver:
             return self._search_non_custom_domain(domain)
 
     def _search_non_custom_domain(self, domain):
-        if domain not in self.domains:
-            domain_info = self._fetch_from_dns(domain)
-            self.domains[domain] = domain_info
+        domain_info = self._fetch_from_dns(domain)
+        self.domains[domain] = domain_info
 
         return self._domain_from_round_robin(domain)
 
